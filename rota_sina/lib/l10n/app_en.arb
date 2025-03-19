@@ -1,0 +1,11 @@
+{
+    "home": "Home",
+    "map": "Map",
+    "centers": "Centers",
+    "profile": "Profile",
+    "login": "Login",
+    "email": "Email",
+    "password": "Password",
+    "loginButton": "Login",
+    "logout": "Logout"
+} 

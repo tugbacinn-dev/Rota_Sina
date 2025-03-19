@@ -1,0 +1,60 @@
+import '../domain/models/product.dart';
+
+final List<Product> products = [
+  Product(
+    id: '1',
+    name: 'Adaçaylı Tuz Sabunu',
+    description: 'Doğal adaçayı özlü ve tuz mineralli el yapımı sabun',
+    price: 200.00,
+    imageUrl: 'assets/images/products/tuzs.jpg',
+    category: 'Sabun',
+  ),
+  Product(
+    id: '2',
+    name: 'Aloe Vera Jeli',
+    description: 'Saf aloe vera özlü nemlendirici ve yatıştırıcı jel',
+    price: 286.00,
+    imageUrl: 'assets/images/products/alo.jpg',
+    category: 'Cilt Bakım',
+  ),
+  Product(
+    id: '3',
+    name: 'Gül Kokulu Kantaron ve Sabun',
+    description: 'Gül ve kantaron özlü doğal el yapımı sabun',
+    price: 59.99,
+    imageUrl: 'assets/images/products/gul.jpg',
+    category: 'Sabun',
+  ),
+  Product(
+    id: '4',
+    name: 'Badem Yağı',
+    description: 'Soğuk sıkım saf badem yağı',
+    price: 129.99,
+    imageUrl: 'assets/images/products/badem.jpg',
+    category: 'Yağ',
+  ),
+  Product(
+    id: '5',
+    name: 'C Vitamini Serumu',
+    description: 'Yüksek konsantrasyonlu C vitamini cilt bakım serumu',
+    price: 199.99,
+    imageUrl: 'assets/images/products/c.jpg',
+    category: 'Cilt Bakım',
+  ),
+  Product(
+    id: '6',
+    name: 'Lavanta Yağı',
+    description: 'Saf lavanta esansiyel yağı',
+    price: 89.99,
+    imageUrl: 'assets/images/products/lavanta.jpg',
+    category: 'Yağ',
+  ),
+  Product(
+    id: '7',
+    name: 'Aynı Sefa Cilt Bakım Kremi',
+    description: 'Yoğun nemlendirici ve onarıcı cilt bakım kremi',
+    price: 149.99,
+    imageUrl: 'assets/images/products/krem.jpg',
+    category: 'Cilt Bakım',
+  ),
+];

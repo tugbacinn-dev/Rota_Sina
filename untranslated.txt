@@ -1,0 +1,28 @@
+{
+  "tr": [
+    "comment",
+    "enterComment",
+    "nearbyPlaces",
+    "culturalPlaces",
+    "historicalPlaces",
+    "naturalPlaces",
+    "restaurants",
+    "cafes",
+    "distance",
+    "selectCenter",
+    "selectedCenter",
+    "send",
+    "close",
+    "prp",
+    "kupaTerapi",
+    "sulukTedavisi",
+    "fitoterapi",
+    "kayropraktik",
+    "biyorezonans",
+    "apiterapi",
+    "hirudoterapi",
+    "homeopati",
+    "proloterapi",
+    "healAndExplore"
+  ]
+}
