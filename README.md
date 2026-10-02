@@ -1,3 +1,21 @@
+<div align="center">
+  <img src="assets/images/logo.png" alt="RotaSina Logo" width="160"/>
+  <h1>RotaSina</h1>
+  <p><strong>Şifanın Rotası</strong></p>
+
+  <p>
+    <img src="https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white" alt="Flutter"/>
+    <img src="https://img.shields.io/badge/Dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white" alt="Dart"/>
+    <img src="https://img.shields.io/badge/Firebase-%23FFCA28.svg?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase"/>
+    <img src="https://img.shields.io/badge/TEKNOFEST-FINALIST-success?style=for-the-badge&logo=target" alt="Teknofest Finalist"/>
+  </p>
+</div>
+
+<br/>
+
+**RotaSina**, Türkiye'nin köklü Geleneksel ve Tamamlayıcı Tıp (GETAT) mirasını modern sağlık turizmi ve kültürel keşifle birleştiren; yerli ve yabancı turistlerin akredite tedavi merkezlerine, güvenilir tamamlayıcı ürünlere ve kişiselleştirilmiş gezi rotalarına erişmesini sağlayan **"İyileş ve Gez" Odaklı Dijital Sağlık Turizmi Mobil Platformu'dur**[cite: 10, 13].
+
+
 # RotaSina (Şifanın Rotası)
 
 **RotaSina**, Türkiye'nin köklü Geleneksel ve Tamamlayıcı Tıp (GETAT) mirasını modern sağlık turizmi ve kültürel keşifle birleştiren; yerli ve yabancı turistlerin akredite tedavi merkezlerine, güvenilir tamamlayıcı ürünlere ve kişiselleştirilmiş gezi rotalarına erişmesini sağlayan **"İyileş ve Gez" Odaklı Dijital Sağlık Turizmi Mobil Platformu'dur**.
