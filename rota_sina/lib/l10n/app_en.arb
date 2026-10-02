@@ -7,5 +7,10 @@
     "email": "Email",
     "password": "Password",
     "loginButton": "Login",
-    "logout": "Logout"
+    "logout": "Logout",
+    "appointments": "Appointments",
+    "cancelAppointment": "Cancel Appointment",
+    "cancelAppointmentConfirmation": "Do you want to cancel this appointment?",
+    "appointmentCancelled": "Appointment cancelled successfully",
+    "noAppointments": "No appointments found"
 } 

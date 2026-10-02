@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:rota_sina/core/routes/app_router.dart';
+import 'package:rota_sina/features/appointments/presentation/bloc/appointments_bloc.dart';
 import 'package:rota_sina/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:rota_sina/features/auth/presentation/bloc/auth_event.dart';
 import 'package:rota_sina/l10n/l10n.dart';
@@ -19,6 +20,9 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (context) => AuthBloc()..add(const AuthCheckRequested()),
+        ),
+        BlocProvider(
+          create: (context) => AppointmentsBloc()..add(const LoadAppointments()),
         ),
       ],
       child: MaterialApp(

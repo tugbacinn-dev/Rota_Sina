@@ -15,7 +15,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get getStarted => 'Başla';
 
   @override
-  String get treatments => 'Tedaviler';
+  String get treatments => 'Ana Sayfa';
 
   @override
   String get centers => 'Merkezler';

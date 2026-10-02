@@ -12,86 +12,144 @@ class TreatmentsPage extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.treatments),
-        backgroundColor: theme.primaryColor,
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: treatments.length,
-        itemBuilder: (context, index) {
-          final treatment = treatments[index];
-
-          return Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+      backgroundColor: const Color(0xFFD2E6D1),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 16),
+            Center(
+              child: Image.asset(
+                'assets/images/logo.png',
+                height: 60,
+              ),
             ),
-            child: IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.horizontal(
-                      left: Radius.circular(12),
-                    ),
-                    child: Container(
-                      color: Colors.grey[100],
-                      width: 160,
-                      child: Center(
-                        child: Image.asset(
-                          _getImagePath(treatment.id),
-                          width: 140,
-                          fit: BoxFit.contain,
-                        ),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Tedavi Ara...',
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: treatments.length,
+                itemBuilder: (context, index) {
+                  final treatment = treatments[index];
+
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 24),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFECE9E9),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.grey.shade300,
+                        width: 1,
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    padding: const EdgeInsets.all(16),
+                    child: IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Text(
-                            treatment.name,
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                          Container(
+                            width: 200,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFECE9E9),
+                              borderRadius: const BorderRadius.horizontal(
+                                left: Radius.circular(12),
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            treatment.description,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          const Spacer(),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: FilledButton.icon(
-                                  onPressed: () => context.go('/centers'),
-                                  icon: const Icon(Icons.local_hospital),
-                                  label: Text(l10n.centers),
-                                  style: FilledButton.styleFrom(
-                                    backgroundColor: Colors.blue.shade700,
+                            child: Center(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey.shade400,
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.asset(
+                                    _getImagePath(treatment.id),
+                                    width: 160,
+                                    height: 160,
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
                               ),
-                            ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    treatment.name,
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    treatment.description,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      SizedBox(
+                                        width: 40,
+                                        height: 40,
+                                        child: FilledButton(
+                                          onPressed: () => context.go('/centers'),
+                                          style: FilledButton.styleFrom(
+                                            backgroundColor: Colors.red,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            padding: EdgeInsets.zero,
+                                          ),
+                                          child: const Icon(
+                                            Icons.arrow_forward,
+                                            color: Colors.white,
+                                            size: 20,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ],
+                  );
+                },
               ),
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }

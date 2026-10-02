@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -10,84 +11,57 @@ class ProfilePage extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n?.profile ?? ''),
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 8),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.language, color: Colors.white),
-              style: IconButton.styleFrom(
-                backgroundColor: Colors.blue.shade700,
-                padding: const EdgeInsets.all(8),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+      backgroundColor: const Color(0xFFD2E6D1),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            Center(
+              child: Image.asset(
+                'assets/images/logo.png',
+                height: 60,
               ),
             ),
-          ),
-        ],
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          _buildProfileHeader(theme),
-          const SizedBox(height: 24),
-          _buildMenuItem(
-            theme,
-            Icons.calendar_today,
-            'Randevularım',
-            'Randevu geçmişinizi görüntüleyin',
-          ),
-          const Divider(),
-          _buildMenuItem(
-            theme,
-            Icons.shopping_bag,
-            'Siparişlerim',
-            'Sipariş geçmişinizi görüntüleyin',
-          ),
-          const Divider(),
-          _buildMenuItem(
-            theme,
-            Icons.favorite,
-            'Favorilerim',
-            'Favori merkezlerinizi görüntüleyin',
-          ),
-          const Divider(),
-          _buildMenuItem(
-            theme,
-            Icons.settings,
-            'Ayarlar',
-            'Uygulama ayarlarını düzenleyin',
-          ),
-          const Divider(),
-          _buildMenuItem(
-            theme,
-            Icons.help,
-            'Yardım',
-            'Sıkça sorulan sorular ve destek',
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton.icon(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue.shade700,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.all(16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+            const SizedBox(height: 24),
+            _buildProfileHeader(theme),
+            const SizedBox(height: 24),
+
+            _buildMenuItem(
+              theme,
+              Icons.info,
+              'Hakkında',
+              'Uygulama bilgilerini görüntüleyin',
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('RotaSina Hakkında'),
+                    content: const SingleChildScrollView(
+                      child: Text(
+                        'RotaSina uygulaması, geleneksel ve tamamlayıcı tıp (GETAT) alanında Türkiye’nin sahip olduğu zengin mirası, sağlık turizmi ile birleştirerek kullanıcılar için keşfedilebilir hale getiriyor. Uygulama, yerli ve yabancı turistlerin güvenilir GETAT merkezlerine kolayca ulaşmasını sağlarken, kullanıcıların yorum yapmasını, puanlar almasını ve çevrelerindeki turistik mekanları keşfetmesini mümkün kılıyor. Çok dilli destek ve harita yönlendirme özellikleriyle, kullanıcılar için pratik ve verimli bir deneyim sunuyor. RotaSina, sağlık turizmini destekleyerek geleneksel tıbbın uluslararası alanda tanıtımına katkı sağlıyor.'
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text('Kapat'),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
-            icon: const Icon(Icons.logout),
-            label: const Text(
+            const Divider(),
+            _buildMenuItem(
+              theme,
+              Icons.logout,
               'Çıkış Yap',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
+              'Hesabınızdan çıkış yapın',
+              onTap: () => context.go('/'),
             ),
-          ),
-        ],
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }
@@ -134,32 +108,52 @@ class ProfilePage extends StatelessWidget {
     ThemeData theme,
     IconData icon,
     String title,
-    String subtitle,
-  ) {
-    return ListTile(
-      leading: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: theme.primaryColor.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(
-          icon,
-          color: theme.primaryColor,
+    String subtitle, {
+    VoidCallback? onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: theme.primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: theme.primaryColor),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: Colors.grey[400],
+            ),
+          ],
         ),
       ),
-      title: Text(
-        title,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      subtitle: Text(subtitle),
-      trailing: Icon(
-        Icons.chevron_right,
-        color: theme.primaryColor,
-      ),
-      onTap: () {},
     );
   }
 }

@@ -4,6 +4,7 @@ class MedicalCenter {
   final double rating;
   final String imageUrl;
   final List<String> services;
+  final String mapsUrl;
 
   const MedicalCenter({
     required this.name,
@@ -11,5 +12,6 @@ class MedicalCenter {
     required this.rating,
     required this.imageUrl,
     required this.services,
+    required this.mapsUrl,
   });
 }

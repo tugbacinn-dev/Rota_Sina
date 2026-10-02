@@ -1,16 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../data/appointments_data.dart';
+import 'package:provider/provider.dart';
+import '../../domain/models/appointment.dart';
+import '../state/appointment_state.dart';
 
-class AppointmentsPage extends StatefulWidget {
+class AppointmentsPage extends StatelessWidget {
   const AppointmentsPage({super.key});
 
   @override
-  State<AppointmentsPage> createState() => _AppointmentsPageState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => AppointmentState(),
+      child: const _AppointmentsPageContent(),
+    );
+  }
 }
 
-class _AppointmentsPageState extends State<AppointmentsPage>
+class _AppointmentsPageContent extends StatefulWidget {
+  const _AppointmentsPageContent({super.key});
+
+  @override
+  State<_AppointmentsPageContent> createState() => _AppointmentsPageContentState();
+}
+
+class _AppointmentsPageContentState extends State<_AppointmentsPageContent>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -32,219 +45,244 @@ class _AppointmentsPageState extends State<AppointmentsPage>
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.appointments),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: [
-            Tab(text: l10n.activeAppointments),
-            Tab(text: l10n.pastAppointments),
+      backgroundColor: const Color(0xFFD2E6D1),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Center(
+              child: Image.asset(
+                'assets/images/logo.png',
+                height: 60,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: TabBar(
+                controller: _tabController,
+                labelColor: Colors.black,
+                unselectedLabelColor: Colors.grey,
+                indicatorSize: TabBarIndicatorSize.tab,
+                indicator: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border(
+                    bottom: BorderSide(
+                      color: theme.primaryColor,
+                      width: 3,
+                    ),
+                  ),
+                ),
+                tabs: [
+                  Tab(
+                    child: Text(
+                      'Aktif Randevular',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Tab(
+                    child: Text(
+                      'Geçmiş Randevular',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildAppointmentsList(true),
+                  _buildAppointmentsList(false),
+                ],
+              ),
+            ),
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _AppointmentsList(
-            appointments: activeAppointments,
-            isActive: true,
-          ),
-          _AppointmentsList(
-            appointments: pastAppointments,
-            isActive: false,
-          ),
-        ],
-      ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
-        backgroundColor: Colors.blue.shade700,
-        label: Text(l10n.makeAppointment),
+        onPressed: () async {
+          final hospitals = [
+            'Doğal Hayat Tıp Merkezi',
+            'Hayat Tıp Merkezi',
+            'Pendik Tıp Merkezi',
+          ];
+          final selected = await showModalBottomSheet<String>(
+            context: context,
+            builder: (ctx) => Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 16),
+                const Text('Hastane Seçin', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                ...hospitals.map((h) => ListTile(
+                  title: Text(h),
+                  onTap: () => Navigator.pop(ctx, h),
+                )),
+                const SizedBox(height: 16),
+              ],
+            ),
+          );
+          if (selected != null) {
+            final doctors = {
+              'Doğal Hayat Tıp Merkezi': 'Dr. Ali Kaya',
+              'Hayat Tıp Merkezi': 'Dr. Elif Demir',
+              'Pendik Tıp Merkezi': 'Dr. Zeynep Koç',
+            };
+            final treatments = ['Sülük Tedavisi', 'Hacamat', 'Akupunktur'];
+            final now = DateTime.now();
+            final appointment = Appointment(
+              id: DateTime.now().millisecondsSinceEpoch.toString(),
+              centerName: selected,
+              doctorName: doctors[selected] ?? 'Dr. Bilinmiyor',
+              treatmentName: (treatments..shuffle()).first,
+              dateTime: DateTime(now.year, now.month, now.day + 1, 10 + (now.second % 6), 30),
+              status: 'upcoming',
+            );
+            Provider.of<AppointmentState>(context, listen: false).addAppointment(appointment);
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Randevu başarıyla oluşturuldu!')),
+              );
+            }
+          }
+        },
+        backgroundColor: theme.primaryColor,
+        label: Text('Randevu Al'),
         icon: const Icon(Icons.add),
       ),
     );
   }
-}
 
-class _AppointmentsList extends StatelessWidget {
-  final List<Appointment> appointments;
-  final bool isActive;
-
-  const _AppointmentsList({
-    required this.appointments,
-    required this.isActive,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
+  Widget _buildAppointmentsList(bool isActive) {
+    final appointmentState = Provider.of<AppointmentState>(context);
+    final appointments = isActive ? appointmentState.activeAppointments : appointmentState.pastAppointments;
     if (appointments.isEmpty) {
-      return Center(
-        child: Text(
-          isActive ? l10n.noActiveAppointments : l10n.noPastAppointments,
-          style: const TextStyle(fontSize: 16),
-        ),
-      );
+      return Center(child: Text(isActive ? 'Aktif randevu yok' : 'Geçmiş randevu yok'));
     }
-
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: appointments.length,
       itemBuilder: (context, index) {
         final appointment = appointments[index];
-        return _AppointmentCard(
-          appointment: appointment,
-          isActive: isActive,
-        );
-      },
-    );
-  }
-}
-
-class _AppointmentCard extends StatelessWidget {
-  final Appointment appointment;
-  final bool isActive;
-
-  const _AppointmentCard({
-    required this.appointment,
-    required this.isActive,
-  });
-
-  Color _getStatusColor() {
-    switch (appointment.status) {
-      case AppointmentStatus.confirmed:
-        return Colors.green;
-      case AppointmentStatus.pending:
-        return Colors.orange;
-      case AppointmentStatus.completed:
-        return Colors.grey;
-      case AppointmentStatus.cancelled:
-        return Colors.red;
-    }
-  }
-
-  String _getStatusText(AppLocalizations l10n) {
-    switch (appointment.status) {
-      case AppointmentStatus.confirmed:
-        return l10n.confirmed;
-      case AppointmentStatus.pending:
-        return l10n.pending;
-      case AppointmentStatus.completed:
-        return l10n.completed;
-      case AppointmentStatus.cancelled:
-        return l10n.cancelled;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    final statusColor = _getStatusColor();
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
+        return Card(
+          margin: const EdgeInsets.only(bottom: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: theme.primaryColor.withOpacity(0.1),
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(12),
-              ),
-            ),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        appointment.treatment,
-                        style: const TextStyle(
-                          fontSize: 18,
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isActive ? Colors.green.shade100 : Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        isActive ? 'Aktif' : 'Tamamlandı',
+                        style: TextStyle(
+                          color: isActive ? Colors.green.shade700 : Colors.grey.shade700,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        appointment.center,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey.shade700,
-                        ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      '${appointment.dateTime.day}/${appointment.dateTime.month}/${appointment.dateTime.year}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: statusColor,
-                      width: 1,
                     ),
-                  ),
-                  child: Text(
-                    _getStatusText(l10n),
-                    style: TextStyle(
-                      color: statusColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
+                const SizedBox(height: 16),
                 _InfoRow(
-                  icon: Icons.person,
-                  label: l10n.doctor,
-                  value: appointment.doctor,
+                  icon: Icons.local_hospital,
+                  label: 'Merkez',
+                  value: appointment.centerName,
                 ),
                 const SizedBox(height: 8),
                 _InfoRow(
-                  icon: Icons.calendar_today,
-                  label: l10n.date,
-                  value: appointment.date,
+                  icon: Icons.person,
+                  label: 'Doktor',
+                  value: appointment.doctorName,
+                ),
+                const SizedBox(height: 8),
+                _InfoRow(
+                  icon: Icons.medical_services,
+                  label: 'Tedavi',
+                  value: appointment.treatmentName,
                 ),
                 const SizedBox(height: 8),
                 _InfoRow(
                   icon: Icons.access_time,
-                  label: l10n.time,
-                  value: appointment.time,
+                  label: 'Saat',
+                  value: '${appointment.dateTime.hour}:${appointment.dateTime.minute.toString().padLeft(2, '0')}',
                 ),
-                if (isActive && appointment.status != AppointmentStatus.cancelled)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton(
-                        onPressed: () {},
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.red,
-                          side: const BorderSide(color: Colors.red),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                if (isActive) ...[
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton.icon(
+                        onPressed: () async {
+  final result = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Randevuyu İptal Et'),
+      content: const Text('İptal etmek istediğinizden emin misiniz?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(false),
+          child: const Text('Hayır'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(true),
+          child: const Text('Evet'),
+        ),
+      ],
+    ),
+  );
+  if (result == true) {
+    Provider.of<AppointmentState>(context, listen: false).cancelAppointment(appointment.id);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Randevu iptal edildi.')),
+    );
+  }
+},
+                        icon: const Icon(Icons.close, color: Colors.red),
+                        label: const Text(
+                          'İptal Et',
+                          style: TextStyle(color: Colors.red),
                         ),
-                        child: Text(l10n.cancel),
                       ),
-                    ),
+                    ],
                   ),
+                ],
               ],
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -264,23 +302,22 @@ class _InfoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 20,
-          color: Colors.grey.shade600,
-        ),
+        Icon(icon, size: 20, color: Colors.grey),
         const SizedBox(width: 8),
         Text(
           '$label:',
-          style: TextStyle(
-            color: Colors.grey.shade600,
+          style: const TextStyle(
+            color: Colors.grey,
+            fontWeight: FontWeight.w500,
           ),
         ),
         const SizedBox(width: 8),
-        Text(
-          value,
-          style: const TextStyle(
-            fontWeight: FontWeight.w500,
+        Expanded(
+          child: Text(
+            value,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ],
